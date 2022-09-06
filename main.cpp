@@ -316,41 +316,47 @@ private:
 
 
 struct RelativeIndex{
-    size_t doc_id;
+    size_t document_id;
     float rank;
 
     bool operator ==(const RelativeIndex& other) const
     {
-        return (doc_id == other.doc_id && rank == other.rank);
+        return (document_id == other.document_id && rank == other.rank);
     }
 };
 
-class SearchServer {
+class SearchServer{
 public:
 
-    SearchServer(InvertedIndex& idx) : _index(idx){};           // в конструктор класса передаётся ссылка на класс InvertedIndex, чтобы SearchServer мог узнать частоту слов встречаемых в запросе
-/**
-* @param queries_input поисковые запросы взятые из файла
-requests.json
-* @return возвращает отсортированный список релевантных ответов для
-заданных запросов
-*/
-    std::vector<std::vector<RelativeIndex>> search(const std::vector<std::string>& queries_input) {                  // метод обработки поисковых запросов
+    SearchServer() = default;           // в конструктор класса передаётся ссылка на класс InvertedIndex, чтобы SearchServer мог узнать частоту слов встречаемых в запросе
+
+
+
+    std::vector<std::vector<RelativeIndex>> search(const std::vector<std::string>& queries_input, std::map<std::string, std::vector<Entry>> _freq_dictionary) {                  // метод обработки поисковых запросов
 
         std::vector<std::vector<RelativeIndex>> sorted_list;
         std::vector<std::map<std::string, std::vector<Entry>>> sorted_dictionary;
-        std::vector<RelativeIndex> relative_temp;
+
 
         for(int i = 0; i < queries_input.size(); i++)            // цикл идет по результатам запросов
         {
-            std::string temp_word;
-            std::stringstream temp_string{queries_input[i]};    // формирует из них уникальные слова
-            std::vector<size_t> relatives;
             std::vector <std::string> request_unique_words;
+            std::vector<RelativeIndex> relative_temp;
+            std::string temp_word;
+            int max_rel = 0;
+
+
+            std::stringstream temp_string{queries_input[i]};    // формирует из них уникальные слова
 
             while(temp_string>>temp_word)
             {
                 bool is_unique = true;
+
+                if(_freq_dictionary.count(temp_word) == 0)       // если слова из запроса нет в списке, возвращаем false и слово не добавляется в список уникальных
+                {
+                    is_unique = false;
+                }
+
                 for(int it = 0; it < request_unique_words.size(); it++)
                 {
                     if(request_unique_words[it] == temp_word)
@@ -361,35 +367,63 @@ requests.json
                 }
                 if(is_unique)
                 {
+                    std::cout<<temp_word<<std::endl;
                     request_unique_words.push_back(temp_word);
                 }
             }
 
-            /*for(int j = 0;j<_index.freq_dictionary_return().find(request_unique_words[0])->second.size();j++)
+            if(!request_unique_words.empty())
             {
-                RelativeIndex rel;
-                rel.doc_id = _index.freq_dictionary_return().find(request_unique_words[0])->second[j].doc_id;
-                rel.rank = _index.freq_dictionary_return().find(request_unique_words[0])->second[j].count;
-                relative_temp.push_back(rel);
-            }*/
-
-            /*for(int k = 0; k<request_unique_words.size(); k++)
-            {
-                for(int j = 0;j<_index.freq_dictionary_return().find(request_unique_words[k])->second.size();j++)
+                for (int j = 0; j < _freq_dictionary.find(request_unique_words[0])->second.size(); j++)          // заполняем поля структуры RelativeIndex значениями первого слова из списка
                 {
-                    size_t relative = 0;
-                    relative += _index.freq_dictionary_return().find(temp_word)->second[j].count;
+                    RelativeIndex rel;
+                    rel.document_id = _freq_dictionary.find(request_unique_words[0])->second[j].doc_id;
+
+                    rel.rank = _freq_dictionary.find(request_unique_words[0])->second[j].count;
+                    if(max_rel<rel.rank)                                                                           // вычисляем максимальную релевантность
+                    {
+                        max_rel = rel.rank;
+                    }
+
+                    relative_temp.push_back(rel);                                                             // добавляем эту структуру в вектор
                 }
+            }
 
-            }*/
+            for(int k = 1; k<request_unique_words.size(); k++)
+            {
+                for(int j = 0;j<_freq_dictionary.find(request_unique_words[k])->second.size();j++)                                 // идем по всем словам запроса, кроме первого и сравниваем эти слова с первым
+                {
+                    if(_freq_dictionary.find(request_unique_words[k])->second[j].doc_id == relative_temp[j].document_id)          // если эти слова встречаются в одном файле, счетчик увеличивается
+                    {
+                        relative_temp[j].rank += _freq_dictionary.find(request_unique_words[k])->second[j].count;
+                        if(max_rel<relative_temp[j].rank)                                                                           // вычисляем максимальную релевантность
+                        {
+                            max_rel = relative_temp[j].rank;
+                        }
+                    }
+                    else                                                                                                  //
+                    {
+                        RelativeIndex rel;
+                        rel.document_id = _freq_dictionary.find(request_unique_words[k])->second[j].doc_id;
+                        rel.rank = _freq_dictionary.find(request_unique_words[k])->second[j].count;                              // ?? Если в файле будет условно только одно слово из нескольких слов запроса, но встречаться оно будет много раз, это должно влиять на относительную релевантность?
+                        relative_temp.push_back(rel);
+                    }
+                }
+            }
 
+            for(int y = 0; y<relative_temp.size(); y++)
+            {
+                relative_temp[y].rank /= max_rel;                                                                                 // высчитываем относительную релевантность
+                std::cout<<"Now: "<<relative_temp[y].document_id<<"    "<<relative_temp[y].rank<<std::endl;
+            }
 
+            sorted_list.push_back(relative_temp);
+
+            std::cout<<"End of request"<<std::endl;
         }
 
         return sorted_list;
     };
-private:
-    InvertedIndex _index;
 };
 
 
@@ -399,11 +433,15 @@ int main() {
 
 ConverterJSON converter;
 InvertedIndex index;
-SearchServer search_server(index);
+SearchServer search_server;
 try
 {
     index.UpdateDocumentBase(converter.GetTextDocuments());
-    search_server.search(converter.GetRequests());
+    search_server.search(converter.GetRequests(), index.freq_dictionary_return());
+
+
+
+
 }
 catch (const std::exception& x)
 {

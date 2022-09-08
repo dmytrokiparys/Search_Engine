@@ -24,7 +24,7 @@ FetchContent_MakeAvailable(googletest)
 
 enable_testing()
 
-add_executable(search_engine main.cpp)
+add_executable(search_engine main.cpp include/ConverterJSON.h src/ConverterJSON.cpp include/InvertedIndex.h src/InvertedIndex.cpp include/SearchServer.h src/SearchServer.cpp include/Exceptions.h include/tests.h)
 
 target_link_libraries(search_engine PRIVATE nlohmann_json::nlohmann_json)
 

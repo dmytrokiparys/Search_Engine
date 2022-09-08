@@ -45,7 +45,7 @@ std::vector<std::vector<RelativeIndex>> search(const std::vector<std::string>& q
 
 ### Starting
 
-To start using the application, create two files "config.json" and "reguests.json". For example config.json and request.json already created.
+To start using the application, create two files "config.json" and "reguests.json". For example config.json, request.json and files to search already created.
 
 **config.json example**
 	

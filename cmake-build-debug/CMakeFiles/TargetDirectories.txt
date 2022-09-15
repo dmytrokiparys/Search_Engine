@@ -13,6 +13,14 @@ C:/Users/iamha/CLionProjects/search_engine/cmake-build-debug/nlohmann_json/CMake
 C:/Users/iamha/CLionProjects/search_engine/cmake-build-debug/nlohmann_json/CMakeFiles/install.dir
 C:/Users/iamha/CLionProjects/search_engine/cmake-build-debug/nlohmann_json/CMakeFiles/install/local.dir
 C:/Users/iamha/CLionProjects/search_engine/cmake-build-debug/nlohmann_json/CMakeFiles/install/strip.dir
+C:/Users/iamha/CLionProjects/search_engine/cmake-build-debug/tests/CMakeFiles/GtestTests.dir
+C:/Users/iamha/CLionProjects/search_engine/cmake-build-debug/tests/CMakeFiles/test.dir
+C:/Users/iamha/CLionProjects/search_engine/cmake-build-debug/tests/CMakeFiles/edit_cache.dir
+C:/Users/iamha/CLionProjects/search_engine/cmake-build-debug/tests/CMakeFiles/rebuild_cache.dir
+C:/Users/iamha/CLionProjects/search_engine/cmake-build-debug/tests/CMakeFiles/list_install_components.dir
+C:/Users/iamha/CLionProjects/search_engine/cmake-build-debug/tests/CMakeFiles/install.dir
+C:/Users/iamha/CLionProjects/search_engine/cmake-build-debug/tests/CMakeFiles/install/local.dir
+C:/Users/iamha/CLionProjects/search_engine/cmake-build-debug/tests/CMakeFiles/install/strip.dir
 C:/Users/iamha/CLionProjects/search_engine/cmake-build-debug/_deps/googletest-build/CMakeFiles/test.dir
 C:/Users/iamha/CLionProjects/search_engine/cmake-build-debug/_deps/googletest-build/CMakeFiles/edit_cache.dir
 C:/Users/iamha/CLionProjects/search_engine/cmake-build-debug/_deps/googletest-build/CMakeFiles/rebuild_cache.dir

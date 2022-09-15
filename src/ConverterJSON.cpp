@@ -1,202 +1,196 @@
-#include "../include/ConverterJSON.h"
+#include "ConverterJSON.h"
 
 
+std::string ConverterJSON::CheckFile(nlohmann::json &cur_file) const {
+    std::ifstream current_file(cur_file);
+    if (!current_file.is_open()) {
+        std::cerr << "\nNot found: " << cur_file << std::endl;
+    } else {
+        std::string current_file_content;
+        std::getline(current_file, current_file_content);
 
+        int words_counter = 0;
+        int word_length = 0;
 
-std::vector<std::string> ConverterJSON::GetTextDocuments()          // Метод получения содержимого файлов. Возвращает список с содержимым файлов перечисленных в config.json
-    {
-        std::ifstream file("../config.json");
-
-        if (!file.is_open())                    // Проверка на наличие JSON-файла config
-        {
-            throw ConfigFileMissing();
+        if (current_file_content[0] >= 97 && current_file_content[0] <= 122) {
+            words_counter = 1;
         }
 
-
-        nlohmann::json dict;
-        file>>dict;
-        nlohmann::json config = dict["config"];
-
-        if (config == nullptr)            //проверка на наличие поля config
-        {
-            throw ConfigFileEmpty();
-        }
-
-        std::string name = config["name"];
-        std::cout<<"Program: "<<name<<std::endl;
-        std::string version = config["version"];             //?? пока непонятно, откуда мы должны получить версию приложения, чтоб сравнить ее с этим полем
-
-        std::string max_respons = config["max_responses"];
-        max_responses = std::stoi(max_respons);
-        nlohmann::json files = dict["files"];
-
-        std::vector<std::string> all_files;
-
-        for(auto it = files.begin(); it != files.end(); it++)
-        {
-            std::ifstream current_file(it.value());
-            if (!current_file.is_open())                    // проверка на то, существует ли очередной файл из списка
-            {
-                std::cerr<<"Not found: "<<it.value()<<std::endl;
+        for (int i = 0; i < current_file_content.size(); i++) {
+            if ((current_file_content[i] < 97 || current_file_content[i] > 122) && current_file_content[i] != ' ') {
+                std::cerr << "\nIncorrect symbol: " << current_file_content[i] << " in file" << cur_file << std::endl;
+                break;
             }
-            else
-            {
-                std::string current_file_content;
 
-                std::getline(current_file, current_file_content);
-
-                int words_counter = 0;
-                int word_length = 0;
-
-                if((current_file_content[0]>=97 && current_file_content[0]<=122))     // проверка, есть ли хоть один символ в файле
-                {
-                    words_counter = 1;
-                }
-
-                for (int i = 0; i<current_file_content.size(); i++)
-                {
-                    if((current_file_content[i]<97 || current_file_content[i]>122) && current_file_content[i] != ' ')    // убеждаемся, что слова состоят лишь из строчных латинских букв и разделены пробелами
-                    {
-                        std::cerr<<"Incorrect symbol: "<<current_file_content[i]<<" in file"<< it.value()<<std::endl;
-                        break;
-                    }
-
-                    if((current_file_content[i]>=97 && current_file_content[i]<=122) && current_file_content[i-1] == ' ') // если слова состоят из букв и разделены пробелами, утснавливаем счетчики
-                    {
-                        word_length = 0;
-                        words_counter += 1;
-                    }
-
-                    word_length +=1;
-
-                    if (words_counter > 1000)      // проверка на количество слов в тексте файла
-                    {
-                        std::cerr<<"More than 1000 words in "<<it.value()<<std::endl;
-                        break;
-                    }
-
-
-                    if(word_length>100)           // проверка на длину слов
-                    {
-                        std::cerr<<"Word in "<<it.value()<<" is too long"<<std::endl;
-                        break;
-                    }
-                }
-
-                if(word_length <= 100 && words_counter <= 1000  && words_counter>0)
-                {
-                    all_files.push_back(current_file_content);            // закидываем в вектор содержимое очередного файла
-                }
-                current_file.close();
+            if ((current_file_content[i] >= 97 && current_file_content[i] <= 122) && current_file_content[i - 1] == ' ') {
+                word_length = 0;
+                words_counter += 1;
             }
-        }
-        file.close();
 
-        for (auto & all_file : all_files)            // ВРЕМЕННО просматриваем файлы из вектора
-        {
-            std::cout<<all_file<<std::endl;
-        }
-        return all_files;                                         // возвращаем все содержимое файлов
-    };
+            word_length += 1;
 
-    int ConverterJSON::GetResponsesLimit()             // Метод возвращает поле max_responses для определения предельного количества ответов на один запрос
-    {
-        return max_responses;
-    };
-
-
-    std::vector<std::string> ConverterJSON::GetRequests()          // Метод получения запросов из файла requests.json, возвращает список запросов из файла requests.json
-    {
-        std::vector<std::string> requests;
-        std::ifstream file ("../requests.json");
-        nlohmann::json dict;
-        file>>dict;
-        nlohmann::json all_requests = dict["requests"];
-        for(auto it = all_requests.begin(); it!=all_requests.end(); it++)
-        {
-            int words_counter = 0;
-            bool is_correct_request = true;
-            if(requests.size()<=1000)
-            {
-                std::string current_request;
-                current_request = it.value();
-                for(int i = 0; i< current_request.size(); i++)
-                {
-                    if((current_request[i] < 97 || current_request[i] >122) && current_request[i] != ' ')         // проверка того, что запрос состоит из строчных латинских букв и пробелов
-                    {
-                        std::cerr<<"Incorrect symbol in current request: "<<current_request[i]<<std::endl;
-                        is_correct_request = false;
-                        break;
-                    }
-                    if(current_request[i-1] == ' ')                                                                 // считаем количество слов
-                    {
-                        words_counter++;
-                    }
-
-                    if (words_counter>10)                                                                         // если в запросе больше 10 слов, выходит ошибка
-                    {
-                        std::cerr<<"Request must be less than 10 words!"<<std::endl;
-                        is_correct_request = false;
-                        break;
-                    }
-                }
-
-                for(int i = 0; i<requests.size(); i++)                              // проверка на уникальность запроса
-                {
-                    if (current_request == requests[i])
-                    {
-                        is_correct_request = false;
-                        break;
-                    }
-                }
-
-                if(is_correct_request)
-                {
-                    requests.push_back(current_request);
-                }
+            if (words_counter > 1000) {
+                std::cerr << "\nMore than 1000 words in " << cur_file << std::endl;
+                break;
             }
-            else
-            {
-                std::cerr<<"In this file too much requests!"<<std::endl;                      //?? или все эти проверки лучше как исключения выбрасывать?
+
+            if (word_length > 100) {
+                std::cerr << "\nWord in " << cur_file << " is too long" << std::endl;
                 break;
             }
         }
 
-        for(auto & request : requests)                                                          // ВРЕМЕННО смотрим список запросов
-        {
-            std::cout<<request<<std::endl;
+        if (word_length <= 100 && words_counter <= 1000 && words_counter > 0) {
+            current_file.close();
+            return current_file_content;
         }
-        return requests;
+    }
+}
+
+
+std::vector<std::string> ConverterJSON::GetTextDocuments() {
+    std::ifstream file("../config_files/config.json");
+
+    if (!file.is_open()) {
+        throw ConfigFileMissing();
     }
 
+    file.seekg(0, std::ios::end);
+    int size = file.tellg();
+    file.seekg(0, std::ios::beg);
+    if (size == 0) {
+        throw ConfigFileEmpty();
+    }
 
-    void ConverterJSON::putAnswers(std::vector<std::vector<RelativeIndex>> answers)             // Метод записывает в файл answers результаты поисковой работы
-    {
-        std::ofstream file("../answers.json");
+    nlohmann::json dict;
+    file >> dict;
+    nlohmann::json config = dict["config"];
 
-        nlohmann::json all_answers_dict;
+    if (config == nullptr) {
+        throw ConfigHoleEmpty();
+    }
 
-        nlohmann::json answer_dict;
-        for (int i = 0; i<answers.size(); i++)
-        {
-            nlohmann::json current_request_dict;
-            if(answers[i].empty())
-            {
-                current_request_dict["result"] = {"false"};
-                answer_dict["request" + std::to_string(i+1)] = current_request_dict;
-            }
-            else
-            {
-                current_request_dict["result"] = {"true"};
-                for (int j = 0; j < answers[i].size(); j++) {
-                    current_request_dict["relevance"] += {"docid: ", answers[i][j].document_id, "rank: ", answers[i][j].rank};
-                }
-                answer_dict["request" + std::to_string(i+1)] = current_request_dict;
-            }
+    std::string name = config["name"];
+    std::cout << "Program: " << name << std::endl;
+    std::string version = config["version"];
+    for (auto it: version) {
+        if ((it < 48 || it > 59) && it != '.') {
+            throw IncorrectVersion();
         }
-        all_answers_dict["answers"] = answer_dict;
-        file<<all_answers_dict;
-        file.close();
-    };
+    }
+
+    std::string max_respons = config["max_responses"];
+    for (auto it: max_respons) {
+        if (it < 48 || it > 59) {
+            throw IncorrectMaxRespons();
+        }
+    }
+    max_responses = std::stoi(max_respons);
+
+    nlohmann::json files = dict["files"];
+    std::vector<std::string> all_files;
+
+    for (auto it = files.begin(); it != files.end(); it++) {
+        all_files.push_back(CheckFile(it.value()));
+    }
+    file.close();
+
+    return all_files;
+};
+
+int ConverterJSON::GetResponsesLimit() const {
+    return max_responses;
+};
+
+
+bool ConverterJSON::IsCorrectRequest(std::string &current_request, int &words_counter, std::vector<std::string> &requests) const {
+    for (int i = 0; i < current_request.size(); i++) {
+        if ((current_request[i] < 97 || current_request[i] > 122) && current_request[i] != ' ') {
+            std::cerr << "\nIncorrect symbol in current request: " << current_request << std::endl;
+            return false;
+        }
+        if (current_request[i - 1] == ' ') {
+            words_counter++;
+        }
+
+        if (words_counter > 10) {
+            std::cerr << "\nRequest must be less than 10 words!" << std::endl;
+            return false;
+        }
+    }
+
+    for (int i = 0; i < requests.size(); i++) {
+        if (current_request == requests[i]) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+std::vector<std::string> ConverterJSON::GetRequests() const {
+    std::vector<std::string> requests;
+    std::ifstream file("../config_files/requests.json");
+
+    if (!file.is_open()) {
+        throw RequestFileMissing();
+    }
+
+    file.seekg(0, std::ios::end);
+    int size = file.tellg();
+    file.seekg(0, std::ios::beg);
+    if (size == 0) {
+        throw RequestFileEmpty();
+    }
+
+    nlohmann::json dict;
+    file >> dict;
+    nlohmann::json all_requests = dict["requests"];
+    for (auto it = all_requests.begin(); it != all_requests.end(); it++) {
+        int words_counter = 0;
+
+        if (requests.size() <= 1000) {
+            std::string current_request;
+            current_request = it.value();
+
+            if (IsCorrectRequest(current_request, words_counter, requests)) {
+                requests.push_back(current_request);
+            }
+        } else {
+            std::cerr << "\nIn this file too much requests!" << std::endl;
+            break;
+        }
+    }
+
+    return requests;
+}
+
+
+void ConverterJSON::PutAnswers(std::vector<std::vector<RelativeIndex>> answers) const {
+    std::ofstream file("../config_files/answers.json");
+
+    nlohmann::json all_answers_dict;
+    nlohmann::json answer_dict;
+    for (int i = 0; i < answers.size(); i++) {
+        nlohmann::json current_request_dict;
+
+        if (answers[i].empty()) {
+            current_request_dict["result"] = {"false"};
+            answer_dict["request" + std::to_string(i + 1)] = current_request_dict;
+        } else {
+            current_request_dict["result"] = {"true"};
+            for (int j = 0; j < answers[i].size(); j++) {
+                current_request_dict["relevance"] += {"docid: ", answers[i][j].document_id, "rank: ",
+                                                      answers[i][j].rank};
+            }
+            answer_dict["request" + std::to_string(i + 1)] = current_request_dict;
+        }
+    }
+    all_answers_dict["answers"] = answer_dict;
+    file << all_answers_dict;
+    file.close();
+}
+
+
 
 

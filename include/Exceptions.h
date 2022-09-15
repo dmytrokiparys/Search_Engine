@@ -1,24 +1,44 @@
-#ifndef SEARCH_ENGINE_EXCEPTIONS_H
-#define SEARCH_ENGINE_EXCEPTIONS_H
 #pragma once
-
 #include <exception>
 
-class ConfigFileEmpty: public std::exception        // исключение для отсутствия поля config
-{
-    const char* what() const noexcept override
-    {
-        return  "Config file is empty!";
+class ConfigHoleEmpty : public std::exception {
+    const char *what() const noexcept override {
+        return "Config hole is empty!";
     }
 };
 
-class ConfigFileMissing: public std::exception       // исключение для отсутствия JSON-файла config
-{
-    const char* what() const noexcept override
-    {
-        return  "Config file is missing!";
+class ConfigFileEmpty : public std::exception {
+    const char *what() const noexcept override {
+        return "Config file is empty!";
     }
 };
 
+class ConfigFileMissing : public std::exception {
+    const char *what() const noexcept override {
+        return "Config file is missing!";
+    }
+};
 
-#endif //SEARCH_ENGINE_EXCEPTIONS_H
+class IncorrectVersion : public std::exception {
+    const char *what() const noexcept override {
+        return "Incorrect version of program!";
+    }
+};
+
+class IncorrectMaxRespons : public std::exception {
+    const char *what() const noexcept override {
+        return "Incorrect quantity of max responses!";
+    }
+};
+
+class RequestFileMissing : public std::exception {
+    const char *what() const noexcept override {
+        return "Request file is missing!";
+    }
+};
+
+class RequestFileEmpty : public std::exception {
+    const char *what() const noexcept override {
+        return "Request file is missing!";
+    }
+};

@@ -3,7 +3,13 @@ project(search_engine)
 
 set(JSON_BuildTests OFF CACHE INTERNAL "")
 
+
+set(MY_SRC_DIR ${CMAKE_SOURCE_DIR}/src)
+
 add_subdirectory(nlohmann_json)
+add_subdirectory(tests)
+
+
 
 include(FetchContent)
 FetchContent_Declare(
@@ -13,6 +19,8 @@ FetchContent_Declare(
 )
 
 include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
+include_directories(${CMAKE_SOURCE_DIR}/include)
+
 
 set(CMAKE_CXX_STANDARD 14)
 
@@ -24,7 +32,7 @@ FetchContent_MakeAvailable(googletest)
 
 enable_testing()
 
-add_executable(search_engine main.cpp include/ConverterJSON.h src/ConverterJSON.cpp include/InvertedIndex.h src/InvertedIndex.cpp include/SearchServer.h src/SearchServer.cpp include/Exceptions.h include/tests.h)
+add_executable(search_engine main.cpp include/ConverterJSON.h src/ConverterJSON.cpp include/InvertedIndex.h src/InvertedIndex.cpp include/SearchServer.h src/SearchServer.cpp include/Exceptions.h tests/SearchEngine_test.cpp)
 
 target_link_libraries(search_engine PRIVATE nlohmann_json::nlohmann_json)
 

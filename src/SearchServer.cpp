@@ -1,109 +1,93 @@
-#include "../include/SearchServer.h"
+#include "SearchServer.h"
 
+int max_rel;
 
+std::vector<std::string> SearchServer::UniqueWords(std::string queries_input, std::map<std::string, std::vector<Entry>> &_freq_dictionary) const {
+    std::vector<std::string> request_unique_words;
+    std::stringstream temp_string{queries_input};
+    std::string temp_word;
 
+    while (temp_string >> temp_word) {
+        bool is_unique = true;
 
-std::vector<std::vector<RelativeIndex>> SearchServer::search(const std::vector<std::string>& queries_input, std::map<std::string, std::vector<Entry>> _freq_dictionary, int response_limit)       // метод обработки поисковых запросов
+        if (_freq_dictionary.count(temp_word) == 0) {
+            is_unique = false;
+        }
+
+        for (int it = 0; it < request_unique_words.size(); it++) {
+            if (request_unique_words[it] == temp_word) {
+                is_unique = false;
+                break;
+            }
+        }
+        if (is_unique) {
+            request_unique_words.push_back(temp_word);
+        }
+    }
+    return request_unique_words;
+}
+
+std::vector<RelativeIndex> SearchServer::Relative(std::string queries_input, std::map<std::string, std::vector<Entry>> &_freq_dictionary) const {
+    std::vector<RelativeIndex> relative_temp;
+    max_rel = 0;
+    std::vector<std::string> unique_words = UniqueWords(queries_input, _freq_dictionary);
+
+    if (!unique_words.empty()) {
+        for (int j = 0; j < _freq_dictionary.find(
+                unique_words[0])->second.size(); j++) {
+            RelativeIndex rel;
+            rel.document_id = _freq_dictionary.find(unique_words[0])->second[j].doc_id;
+
+            rel.rank = _freq_dictionary.find(unique_words[0])->second[j].count;
+            if (max_rel < rel.rank) {
+                max_rel = rel.rank;
+            }
+            relative_temp.push_back(rel);
+        }
+    }
+
+    for (int k = 1; k < unique_words.size(); k++) {
+        for (int j = 0; j < _freq_dictionary.find(unique_words[k])->second.size(); j++) {
+            if (_freq_dictionary.find(unique_words[k])->second[j].doc_id == relative_temp[j].document_id) {
+                relative_temp[j].rank += _freq_dictionary.find(unique_words[k])->second[j].count;
+                if (max_rel < relative_temp[j].rank) {
+                    max_rel = relative_temp[j].rank;
+                }
+            } else {
+                RelativeIndex rel;
+                rel.document_id = _freq_dictionary.find(unique_words[k])->second[j].doc_id;
+                rel.rank = _freq_dictionary.find(unique_words[k])->second[j].count;
+            }
+        }
+    }
+    return relative_temp;
+}
+
+std::vector<std::vector<RelativeIndex>> SearchServer::Search(const std::vector<std::string> &queries_input, std::map<std::string, std::vector<Entry>> _freq_dictionary, int response_limit) const
 {
     std::vector<std::vector<RelativeIndex>> sorted_list;
 
-        for(int i = 0; i < queries_input.size(); i++)            // цикл идет по результатам запросов
-        {
-            std::vector <std::string> request_unique_words;
-            std::vector<RelativeIndex> relative_temp;
-            std::string temp_word;
-            int max_rel = 0;
-
-
-
-                std::stringstream temp_string{queries_input[i]};    // формирует из них уникальные слова
-
-                while (temp_string >> temp_word) {
-                    bool is_unique = true;
-
-                    if(_freq_dictionary.count(temp_word) == 0) {
-                        is_unique = false;
-                    }
-
-                    for (int it = 0; it < request_unique_words.size(); it++) {
-                        if (request_unique_words[it] == temp_word) {
-                            is_unique = false;
-                            break;
-                        }
-                    }
-                    if (is_unique) {
-                        std::cout << temp_word << std::endl;
-                        request_unique_words.push_back(temp_word);
-                    }
+    for (int i = 0; i < queries_input.size(); i++) {
+        std::vector<RelativeIndex> relative_ind = Relative(queries_input[i], _freq_dictionary);
+        for (int j = 1; j < relative_ind.size(); ++j) {
+            for (int r = 0; r < relative_ind.size() - j; r++) {
+                if (relative_ind[r].rank < relative_ind[r + 1].rank) {
+                    auto temp = relative_ind[r];
+                    relative_ind[r] = relative_ind[r + 1];
+                    relative_ind[r + 1] = temp;
                 }
-
-                if (!request_unique_words.empty()) {
-                    for (int j = 0; j < _freq_dictionary.find(
-                            request_unique_words[0])->second.size(); j++)          // заполняем поля структуры RelativeIndex значениями первого слова из списка
-                    {
-                        RelativeIndex rel;
-                        rel.document_id = _freq_dictionary.find(request_unique_words[0])->second[j].doc_id;
-
-                        rel.rank = _freq_dictionary.find(request_unique_words[0])->second[j].count;
-                        if (max_rel <
-                            rel.rank)                                                                           // вычисляем максимальную релевантность
-                        {
-                            max_rel = rel.rank;
-                        }
-
-                        relative_temp.push_back(rel);                                                             // добавляем эту структуру в вектор
-                    }
-                }
-
-                for (int k = 1; k < request_unique_words.size(); k++) {
-                    for (int j = 0; j < _freq_dictionary.find(
-                            request_unique_words[k])->second.size(); j++)                                 // идем по всем словам запроса, кроме первого и сравниваем эти слова с первым
-                    {
-                        if (_freq_dictionary.find(request_unique_words[k])->second[j].doc_id == relative_temp[j].document_id)          // если эти слова встречаются в одном файле, счетчик увеличивается
-                        {
-                            relative_temp[j].rank += _freq_dictionary.find(request_unique_words[k])->second[j].count;
-                            if (max_rel < relative_temp[j].rank)                                                                           // вычисляем максимальную релевантность
-                            {
-                                max_rel = relative_temp[j].rank;
-                            }
-                        } else {
-                            RelativeIndex rel;
-                            rel.document_id = _freq_dictionary.find(request_unique_words[k])->second[j].doc_id;
-                            rel.rank = _freq_dictionary.find(request_unique_words[k])->second[j].count;                // ?? Если в файле будет условно только одно слово из нескольких слов запроса, но встречаться оно будет много раз, это должно влиять на относительную релевантность?
-                            relative_temp.push_back(rel);
-                        }
-                    }
-                }
-
-                for (int i = 1; i < relative_temp.size(); ++i)                                     // сортируем вектор с ответами по убыванию релевантности
-                {
-                    for (int r = 0; r < relative_temp.size() - i; r++) {
-                        if (relative_temp[r].rank < relative_temp[r + 1].rank) {
-                            float temp = relative_temp[r].rank;
-                            relative_temp[r].rank = relative_temp[r + 1].rank;
-                            relative_temp[r + 1].rank = temp;
-                        }
-                    }
-                }
-
-                if (relative_temp.size() > response_limit) {
-                    relative_temp.resize(response_limit);                          // меняем размер вектора в зависимости от указанного нам значения response_limit
-                }
-
-                for (int y = 0; y < relative_temp.size(); y++) {
-                    relative_temp[y].rank /= max_rel;                                                                                 // высчитываем относительную релевантность
-                    std::cout << "Now: " << relative_temp[y].document_id << "    " << relative_temp[y].rank << std::endl;         // ВРЕМЕННО ДЛЯ ПРОВЕРКИ
-                }
-
-                sorted_list.push_back(relative_temp);
-
-                std::cout << "End of request" << std::endl;                                       // ВРЕМЕННО ДЛЯ ПРОВЕРКИ
             }
+        }
 
+        if (relative_ind.size() > response_limit) {
+            relative_ind.resize(response_limit);
+        }
 
-        for(int t = 0;t<sorted_list.size();t++)
-            std::cout<<"size: "<<sorted_list[t].size()<<"    ";                                   // ВРЕМЕННО ДЛЯ ПРОВЕРКИ
-
-        return sorted_list;
-    };
+        for (int y = 0; y < relative_ind.size(); y++) {
+            relative_ind[y].rank /= max_rel;
+        }
+        sorted_list.push_back(relative_ind);
+    }
+    return sorted_list;
+};
 

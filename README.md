@@ -33,15 +33,19 @@ searching results.
 - std::vector<std::string> getRequests() const - returns a list of requests received from file "request.json".
 - struct RelativeIndex - contains document id and rank of another answer to the request.
 - void putAnswers(std::vector<std::vector<RelativeIndex>> answers) const - puts the search results, received from vector "answers" in the file "answers.json".
+- std::string CheckFile(nlohmann::json &cur_file) - checks each file from the list for the number of words and correctness of the entered data.
+- bool IsCorrectRequest(std::string &current_request, int &words_counter, std::vector<std::string> &requests) const - checks each request from the list for the number of words and correctness of the entered data.
 
 #### InvertedIndex
 - void updateDocumentBase(std::vector<std::string> input_docs) - counts number of words, received from input list.
 - struct Entry - contains document id and rank of another word from list.
-- std::vector<Entry> getWordCount(const std::string& word) const - returns a list of indexes for the specified word, regardless of the document
-- std::map<std::string, std::vector<Entry>> InvertedIndex::freq_dictionary_return - returns a list of all indexed words
+- std::vector<Entry> getWordCount(const std::string& word) const - returns a list of indexes for the specified word, regardless of the document.
+- std::map<std::string, std::vector<Entry>> freq_dictionary_return - returns a list of all indexed words.
 
 #### SearchServer
-std::vector<std::vector<RelativeIndex>> search(const std::vector<std::string>& queries_input, std::map<std::string, std::vector<Entry>> _freq_dictionary, int response_limit) - returns the result of a search by words, taking into account their relativity according to the internal formula
+- std::vector<std::vector<RelativeIndex>> search(const std::vector<std::string>& queries_input, std::map<std::string, std::vector<Entry>> _freq_dictionary, int response_limit) - returns the result of a search by words, taking into account their relativity according to the internal formula.
+- std::vector<RelativeIndex> relative(std::string queries_input, std::map<std::string, std::vector<Entry>> &_freq_dictionary) const - calculates the relevancy index for each query.
+- std::vector<std::string> _unique_words(std::string queries_input, std::map<std::string, std::vector<Entry>> &_freq_dictionary) const - defines unique query words.
 
 ### Starting
 
@@ -75,3 +79,5 @@ To start using the application, create two files "config.json" and "reguests.jso
     }
 
 Then run SearchEngine, the result of the application will be the file "answers.json" containing a list of found words and their relativity.
+	
+Google tests are also connected to this program. Possible to start them from "tests/SearchEngine_test.cpp".

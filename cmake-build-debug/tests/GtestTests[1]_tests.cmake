@@ -1,0 +1,7 @@
+add_test([=[SearchEngine.search1]=]  C:/Users/iamha/CLionProjects/search_engine/tests/GtestTests.exe [==[--gtest_filter=SearchEngine.search1]==] --gtest_also_run_disabled_tests)
+set_tests_properties([=[SearchEngine.search1]=]  PROPERTIES WORKING_DIRECTORY C:/Users/iamha/CLionProjects/search_engine/cmake-build-debug/tests SKIP_REGULAR_EXPRESSION [==[\[  SKIPPED \]]==])
+add_test([=[SearchEngine.search2]=]  C:/Users/iamha/CLionProjects/search_engine/tests/GtestTests.exe [==[--gtest_filter=SearchEngine.search2]==] --gtest_also_run_disabled_tests)
+set_tests_properties([=[SearchEngine.search2]=]  PROPERTIES WORKING_DIRECTORY C:/Users/iamha/CLionProjects/search_engine/cmake-build-debug/tests SKIP_REGULAR_EXPRESSION [==[\[  SKIPPED \]]==])
+add_test([=[SearchEngine.search3]=]  C:/Users/iamha/CLionProjects/search_engine/tests/GtestTests.exe [==[--gtest_filter=SearchEngine.search3]==] --gtest_also_run_disabled_tests)
+set_tests_properties([=[SearchEngine.search3]=]  PROPERTIES WORKING_DIRECTORY C:/Users/iamha/CLionProjects/search_engine/cmake-build-debug/tests SKIP_REGULAR_EXPRESSION [==[\[  SKIPPED \]]==])
+set(  GtestTests_TESTS SearchEngine.search1 SearchEngine.search2 SearchEngine.search3)

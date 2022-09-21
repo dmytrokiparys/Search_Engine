@@ -1,6 +1,6 @@
 #include "SearchServer.h"
 
-/*int main() {
+int main() {
 
     ConverterJSON converter;
     InvertedIndex index;
@@ -13,4 +13,4 @@
     catch (const std::exception &x) {
         std::cerr << "Caught exception: " << x.what() << std::endl;
     }
-}*/
+}

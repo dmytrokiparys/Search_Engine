@@ -274,29 +274,33 @@ build nlohmann_json/install/strip: phony nlohmann_json/CMakeFiles/install/strip.
 #############################################
 # Order-only phony target for GtestTests
 
-build cmake_object_order_depends_target_GtestTests: phony || tests/CMakeFiles/GtestTests.dir
+build cmake_object_order_depends_target_GtestTests: phony || cmake_object_order_depends_target_gtest cmake_object_order_depends_target_gtest_main
 
 build tests/CMakeFiles/GtestTests.dir/SearchEngine_test.cpp.obj: CXX_COMPILER__GtestTests_Debug C$:/Users/iamha/CLionProjects/search_engine/tests/SearchEngine_test.cpp || cmake_object_order_depends_target_GtestTests
   DEP_FILE = tests\CMakeFiles\GtestTests.dir\SearchEngine_test.cpp.obj.d
   FLAGS = -g
+  INCLUDES = -IC:/Users/iamha/CLionProjects/search_engine/tests/../include -IC:/Users/iamha/CLionProjects/search_engine/tests/../src -IC:/Users/iamha/CLionProjects/search_engine/tests/../nlohmann_json -IC:/Users/iamha/CLionProjects/search_engine/nlohmann_json/include -isystem C:/Users/iamha/CLionProjects/search_engine/cmake-build-debug/_deps/googletest-src/googletest/include -isystem C:/Users/iamha/CLionProjects/search_engine/cmake-build-debug/_deps/googletest-src/googletest
   OBJECT_DIR = tests\CMakeFiles\GtestTests.dir
   OBJECT_FILE_DIR = tests\CMakeFiles\GtestTests.dir
 
 build tests/CMakeFiles/GtestTests.dir/__/src/InvertedIndex.cpp.obj: CXX_COMPILER__GtestTests_Debug C$:/Users/iamha/CLionProjects/search_engine/src/InvertedIndex.cpp || cmake_object_order_depends_target_GtestTests
   DEP_FILE = tests\CMakeFiles\GtestTests.dir\__\src\InvertedIndex.cpp.obj.d
   FLAGS = -g
+  INCLUDES = -IC:/Users/iamha/CLionProjects/search_engine/tests/../include -IC:/Users/iamha/CLionProjects/search_engine/tests/../src -IC:/Users/iamha/CLionProjects/search_engine/tests/../nlohmann_json -IC:/Users/iamha/CLionProjects/search_engine/nlohmann_json/include -isystem C:/Users/iamha/CLionProjects/search_engine/cmake-build-debug/_deps/googletest-src/googletest/include -isystem C:/Users/iamha/CLionProjects/search_engine/cmake-build-debug/_deps/googletest-src/googletest
   OBJECT_DIR = tests\CMakeFiles\GtestTests.dir
   OBJECT_FILE_DIR = tests\CMakeFiles\GtestTests.dir\__\src
 
 build tests/CMakeFiles/GtestTests.dir/__/src/SearchServer.cpp.obj: CXX_COMPILER__GtestTests_Debug C$:/Users/iamha/CLionProjects/search_engine/src/SearchServer.cpp || cmake_object_order_depends_target_GtestTests
   DEP_FILE = tests\CMakeFiles\GtestTests.dir\__\src\SearchServer.cpp.obj.d
   FLAGS = -g
+  INCLUDES = -IC:/Users/iamha/CLionProjects/search_engine/tests/../include -IC:/Users/iamha/CLionProjects/search_engine/tests/../src -IC:/Users/iamha/CLionProjects/search_engine/tests/../nlohmann_json -IC:/Users/iamha/CLionProjects/search_engine/nlohmann_json/include -isystem C:/Users/iamha/CLionProjects/search_engine/cmake-build-debug/_deps/googletest-src/googletest/include -isystem C:/Users/iamha/CLionProjects/search_engine/cmake-build-debug/_deps/googletest-src/googletest
   OBJECT_DIR = tests\CMakeFiles\GtestTests.dir
   OBJECT_FILE_DIR = tests\CMakeFiles\GtestTests.dir\__\src
 
 build tests/CMakeFiles/GtestTests.dir/__/src/ConverterJSON.cpp.obj: CXX_COMPILER__GtestTests_Debug C$:/Users/iamha/CLionProjects/search_engine/src/ConverterJSON.cpp || cmake_object_order_depends_target_GtestTests
   DEP_FILE = tests\CMakeFiles\GtestTests.dir\__\src\ConverterJSON.cpp.obj.d
   FLAGS = -g
+  INCLUDES = -IC:/Users/iamha/CLionProjects/search_engine/tests/../include -IC:/Users/iamha/CLionProjects/search_engine/tests/../src -IC:/Users/iamha/CLionProjects/search_engine/tests/../nlohmann_json -IC:/Users/iamha/CLionProjects/search_engine/nlohmann_json/include -isystem C:/Users/iamha/CLionProjects/search_engine/cmake-build-debug/_deps/googletest-src/googletest/include -isystem C:/Users/iamha/CLionProjects/search_engine/cmake-build-debug/_deps/googletest-src/googletest
   OBJECT_DIR = tests\CMakeFiles\GtestTests.dir
   OBJECT_FILE_DIR = tests\CMakeFiles\GtestTests.dir\__\src
 
@@ -308,9 +312,9 @@ build tests/CMakeFiles/GtestTests.dir/__/src/ConverterJSON.cpp.obj: CXX_COMPILER
 #############################################
 # Link the executable ..\tests\GtestTests.exe
 
-build ../tests/GtestTests.exe tests/GtestTests[1]_tests.cmake | ${cmake_ninja_workdir}tests/GtestTests[1]_tests.cmake: CXX_EXECUTABLE_LINKER__GtestTests_Debug tests/CMakeFiles/GtestTests.dir/SearchEngine_test.cpp.obj tests/CMakeFiles/GtestTests.dir/__/src/InvertedIndex.cpp.obj tests/CMakeFiles/GtestTests.dir/__/src/SearchServer.cpp.obj tests/CMakeFiles/GtestTests.dir/__/src/ConverterJSON.cpp.obj
+build ../tests/GtestTests.exe tests/GtestTests[1]_tests.cmake | ${cmake_ninja_workdir}tests/GtestTests[1]_tests.cmake: CXX_EXECUTABLE_LINKER__GtestTests_Debug tests/CMakeFiles/GtestTests.dir/SearchEngine_test.cpp.obj tests/CMakeFiles/GtestTests.dir/__/src/InvertedIndex.cpp.obj tests/CMakeFiles/GtestTests.dir/__/src/SearchServer.cpp.obj tests/CMakeFiles/GtestTests.dir/__/src/ConverterJSON.cpp.obj | lib/libgtestd.a lib/libgtest_maind.a lib/libgtestd.a || lib/libgtest_maind.a lib/libgtestd.a
   FLAGS = -g
-  LINK_LIBRARIES = -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32
+  LINK_LIBRARIES = lib/libgtestd.a  lib/libgtest_maind.a  lib/libgtestd.a  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32
   OBJECT_DIR = tests\CMakeFiles\GtestTests.dir
   POST_BUILD = cmd.exe /C "cd /D C:\Users\iamha\CLionProjects\search_engine\cmake-build-debug\tests && "C:\Program Files\JetBrains\CLion 2022.2.1\bin\cmake\win\bin\cmake.exe" -D TEST_TARGET=GtestTests -D TEST_EXECUTABLE=C:/Users/iamha/CLionProjects/search_engine/tests/GtestTests.exe -D TEST_EXECUTOR= -D TEST_WORKING_DIR=C:/Users/iamha/CLionProjects/search_engine/cmake-build-debug/tests -D TEST_EXTRA_ARGS= -D TEST_PROPERTIES= -D TEST_PREFIX= -D TEST_SUFFIX= -D TEST_FILTER= -D NO_PRETTY_TYPES=FALSE -D NO_PRETTY_VALUES=FALSE -D TEST_LIST=GtestTests_TESTS -D CTEST_FILE=C:/Users/iamha/CLionProjects/search_engine/cmake-build-debug/tests/GtestTests[1]_tests.cmake -D TEST_DISCOVERY_TIMEOUT=5 -D TEST_XML_OUTPUT_DIR= -P "C:/Program Files/JetBrains/CLion 2022.2.1/bin/cmake/win/share/cmake-3.23/Modules/GoogleTestAddTests.cmake""
   PRE_LINK = cd .

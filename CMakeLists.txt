@@ -11,6 +11,7 @@ add_subdirectory(tests)
 
 
 
+
 include(FetchContent)
 FetchContent_Declare(
         googletest
@@ -20,6 +21,7 @@ FetchContent_Declare(
 
 include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
 include_directories(${CMAKE_SOURCE_DIR}/include)
+
 
 
 set(CMAKE_CXX_STANDARD 14)

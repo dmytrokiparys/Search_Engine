@@ -39,6 +39,13 @@ class RequestFileMissing : public std::exception {
 
 class RequestFileEmpty : public std::exception {
     const char *what() const noexcept override {
-        return "Request file is missing!";
+        return "Request file is empty!";
     }
 };
+
+class AnswersFileError : public std::exception {
+    const char *what() const noexcept override {
+        return "Error while writing answers!";
+    }
+};
+

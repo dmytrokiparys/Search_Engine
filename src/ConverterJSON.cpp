@@ -49,7 +49,7 @@ std::string ConverterJSON::CheckFile(nlohmann::json &cur_file) const {
 
 
 std::vector<std::string> ConverterJSON::GetTextDocuments() {
-    std::ifstream file("../config_files/config.json");
+    std::ifstream file("config_files/config.json");
 
     if (!file.is_open()) {
         throw ConfigFileMissing();
@@ -130,7 +130,7 @@ bool ConverterJSON::IsCorrectRequest(std::string &current_request, int &words_co
 
 std::vector<std::string> ConverterJSON::GetRequests() const {
     std::vector<std::string> requests;
-    std::ifstream file("../config_files/requests.json");
+    std::ifstream file("config_files/requests.json");
 
     if (!file.is_open()) {
         throw RequestFileMissing();
@@ -167,27 +167,35 @@ std::vector<std::string> ConverterJSON::GetRequests() const {
 
 
 void ConverterJSON::PutAnswers(std::vector<std::vector<RelativeIndex>> answers) const {
-    std::ofstream file("../config_files/answers.json");
+    std::ofstream file("config_files/answers.json");
 
-    nlohmann::json all_answers_dict;
-    nlohmann::json answer_dict;
-    for (int i = 0; i < answers.size(); i++) {
-        nlohmann::json current_request_dict;
+    if(file.is_open())
+    {
+        nlohmann::json all_answers_dict;
+        nlohmann::json answer_dict;
+        for (int i = 0; i < answers.size(); i++) {
+            nlohmann::json current_request_dict;
 
-        if (answers[i].empty()) {
-            current_request_dict["result"] = {"false"};
-            answer_dict["request" + std::to_string(i + 1)] = current_request_dict;
-        } else {
-            current_request_dict["result"] = {"true"};
-            for (int j = 0; j < answers[i].size(); j++) {
-                current_request_dict["relevance"] += {"docid: ", answers[i][j].document_id, "rank: ",
-                                                      answers[i][j].rank};
+            if (answers[i].empty()) {
+                current_request_dict["result"] = {"false"};
+                answer_dict["request" + std::to_string(i + 1)] = current_request_dict;
+            } else {
+                current_request_dict["result"] = {"true"};
+                for (int j = 0; j < answers[i].size(); j++) {
+                    current_request_dict["relevance"] += {"docid: ", answers[i][j].document_id, "rank: ",
+                                                          answers[i][j].rank};
+                }
+                answer_dict["request" + std::to_string(i + 1)] = current_request_dict;
             }
-            answer_dict["request" + std::to_string(i + 1)] = current_request_dict;
         }
+        all_answers_dict["answers"] = answer_dict;
+        file << all_answers_dict;
     }
-    all_answers_dict["answers"] = answer_dict;
-    file << all_answers_dict;
+    else
+    {
+        throw AnswersFileError();
+    }
+
     file.close();
 }
 

@@ -49,7 +49,7 @@ searching results.
 
 ### Starting
 
-To start using the application, create two files "config.json" and "reguests.json". These files must be located in the folder "config files". For example config.json, request.json and files to search already created.
+To start using the application, create two files "config.json" and "reguests.json". These files must be located in the folder "cmake-build-debug/config files". For example config.json, request.json and files to search already created.
 
 **config.json example**
 	

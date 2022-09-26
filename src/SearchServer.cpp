@@ -27,44 +27,42 @@ std::vector<std::string> SearchServer::UniqueWords(std::string queries_input, st
     return request_unique_words;
 }
 
-std::vector<RelativeIndex> SearchServer::Relative(std::string queries_input, std::map<std::string, std::vector<Entry>> &_freq_dictionary) const {
+std::vector<RelativeIndex>
+SearchServer::Relative(std::string queries_input, std::map<std::string, std::vector<Entry>> &_freq_dictionary) const {
     std::vector<RelativeIndex> relative_temp;
     max_rel = 0;
     std::vector<std::string> unique_words = UniqueWords(queries_input, _freq_dictionary);
 
     if (!unique_words.empty()) {
-        for (int j = 0; j < _freq_dictionary.find(
-                unique_words[0])->second.size(); j++) {
-            RelativeIndex rel;
-            rel.document_id = _freq_dictionary.find(unique_words[0])->second[j].doc_id;
-
-            rel.rank = _freq_dictionary.find(unique_words[0])->second[j].count;
-            if (max_rel < rel.rank) {
-                max_rel = rel.rank;
-            }
-            relative_temp.push_back(rel);
-        }
-    }
-
-    for (int k = 1; k < unique_words.size(); k++) {
-        for (int j = 0; j < _freq_dictionary.find(unique_words[k])->second.size(); j++) {
-            if (_freq_dictionary.find(unique_words[k])->second[j].doc_id == relative_temp[j].document_id) {
-                relative_temp[j].rank += _freq_dictionary.find(unique_words[k])->second[j].count;
-                if (max_rel < relative_temp[j].rank) {
-                    max_rel = relative_temp[j].rank;
-                }
-            } else {
+        for (int i = 0; i < unique_words.size(); i++) {
+            for (int j = 0; j < _freq_dictionary.find(unique_words[i])->second.size(); j++) {
                 RelativeIndex rel;
-                rel.document_id = _freq_dictionary.find(unique_words[k])->second[j].doc_id;
-                rel.rank = _freq_dictionary.find(unique_words[k])->second[j].count;
+                rel.document_id = _freq_dictionary.find(unique_words[i])->second[j].doc_id;
+                rel.rank = _freq_dictionary.find(unique_words[i])->second[j].count;
+                if (max_rel < rel.rank) {
+                    max_rel = rel.rank;
+                }
+                bool is_contain_id = true;
+                for (int k = 0; k < relative_temp.size(); k++) {
+                    if (relative_temp[k].document_id == _freq_dictionary.find(unique_words[i])->second[j].doc_id) {
+                        is_contain_id = false;
+                        relative_temp[k].rank += _freq_dictionary.find(unique_words[i])->second[j].count;
+                        if (max_rel < relative_temp[k].rank) {
+                            max_rel = relative_temp[k].rank;
+                        }
+                    }
+                }
+                if (is_contain_id) {
+                    relative_temp.push_back(rel);
+                }
             }
         }
     }
+
     return relative_temp;
 }
 
-std::vector<std::vector<RelativeIndex>> SearchServer::Search(const std::vector<std::string> &queries_input, std::map<std::string, std::vector<Entry>> _freq_dictionary, int response_limit) const
-{
+std::vector<std::vector<RelativeIndex>> SearchServer::Search(const std::vector<std::string> &queries_input, std::map<std::string, std::vector<Entry>> _freq_dictionary, int response_limit) const {
     std::vector<std::vector<RelativeIndex>> sorted_list;
 
     for (int i = 0; i < queries_input.size(); i++) {
@@ -86,6 +84,7 @@ std::vector<std::vector<RelativeIndex>> SearchServer::Search(const std::vector<s
         for (int y = 0; y < relative_ind.size(); y++) {
             relative_ind[y].rank /= max_rel;
         }
+
         sorted_list.push_back(relative_ind);
     }
     return sorted_list;

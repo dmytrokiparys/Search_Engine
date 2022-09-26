@@ -58,18 +58,16 @@ TEST(SearchEngine, search2) {
 
 TEST(SearchEngine, search3) {
     std::vector<std::string> requests{
-            "milk water milk",
-            "latte",
-            "sugar",
-            "coffee",
-            "water coffee"
+            "kiev is the capital of ukraine",
+            "other",
     };
     std::vector<std::string> docs =
             {
-                    "milk milk milk milk water water water coffee",
-                    "milk water water sugar sugar",
-                    "milk milk milk milk milk water water water water water milk coffee",
-                    "americano cappuccino water sugar"
+                    "london is the capital of great britain",
+                    "moscow is the capital of russia",
+                    "kiev is the capital of ukraine",
+                    "welcome to the kiev the capital of ukraine",
+                    "amsterdam is the capital of netherlands",
             };
 
     InvertedIndex idx;
@@ -79,28 +77,15 @@ TEST(SearchEngine, search3) {
     auto result = srv.Search(requests, idx.FreqDictionaryReturn(), conv.GetResponsesLimit());
     std::vector<std::vector<RelativeIndex>> excepted{
             {
-                    {2, 1.0},
-                    {0, 0.6363636255264282},
-                    {1, 0.27272728085517883}
+                    {2, 1},
+                    {3, 1},
+                    {0, 0.666666687},
+                    {1, 0.666666687},
+                    {4, 0.666666687}
             },
             {
 
-            },
-            {
-                    {1, 1.0},
-                    {3, 0.5}
-            },
-            {
-                    {0, 1.0},
-                    {2, 1.0}
-            },
-            {
-                    {2, 1.0},
-                    {0, 0.800000011920929},
-                    {1, 0.4000000059604645},
-                    {3, 0.20000000298023224}
             }
-
     };
     EXPECT_EQ(result, excepted);
 }

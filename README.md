@@ -50,7 +50,7 @@ searching results.
 
 ### Starting
 
-To start using the application, create two files "config.json" and "reguests.json". These files must be located in the folder "config_files" is in the directory of the executable file. For example config.json, request.json and files to search already created.
+To start using the application, create two files "config.json" and "reguests.json". These files must be located in the folder "config_files" which is in the directory of the executable file. For example config.json, request.json and files to search already created.
 
 **config.json example**
 	
@@ -103,4 +103,3 @@ Step 3. Start application:
 ****
 .\Release\search_engine
 ****
-

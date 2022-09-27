@@ -44,6 +44,11 @@ std::string ConverterJSON::CheckFile(nlohmann::json &cur_file) const {
             current_file.close();
             return current_file_content;
         }
+        else {
+            current_file_content = "";
+            current_file.close();
+            return current_file_content;
+        }
     }
 }
 
@@ -91,7 +96,7 @@ std::vector<std::string> ConverterJSON::GetTextDocuments() {
     std::vector<std::string> all_files;
 
     for (auto it = files.begin(); it != files.end(); it++) {
-        all_files.push_back(CheckFile(it.value()));
+            all_files.push_back(CheckFile(it.value()));
     }
     file.close();
 

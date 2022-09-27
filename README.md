@@ -4,6 +4,7 @@ Application for search text in files.
 * [Description](#description)
 * [Methods](#methods)
 * [Starting](#starting)
+* [Build](#build)
 
 ### Description
 
@@ -49,7 +50,7 @@ searching results.
 
 ### Starting
 
-To start using the application, create two files "config.json" and "reguests.json". These files must be located in the folder "config files". For example config.json, request.json and files to search already created.
+To start using the application, create two files "config.json" and "reguests.json". These files must be located in the folder "config_files" is in the directory of the executable file. For example config.json, request.json and files to search already created.
 
 **config.json example**
 	
@@ -81,3 +82,25 @@ To start using the application, create two files "config.json" and "reguests.jso
 Then run SearchEngine, the result of the application will be the file "answers.json" containing a list of found words and their relativity.
 	
 Google tests are also connected to this program. Possible to start them from "tests/SearchEngine_test.cpp".
+
+### Build
+
+Step 1. Create build folder in project folder:
+
+****
+mkdir build && cd build
+****
+
+Step 2. Build project with CMake:
+
+****
+cmake .. && cmake --build . --config Release --target search_engine
+****
+As a result, the project file will be placed in the Release folder in the root directory. The test file will be placed in the \tests subdirectory.
+
+Step 3. Start application:
+
+****
+.\Release\search_engine
+****
+

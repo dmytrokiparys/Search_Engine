@@ -3,10 +3,10 @@
 
 std::string ConverterJSON::CheckFile(nlohmann::json &cur_file) const {
     std::ifstream current_file(cur_file);
+    std::string current_file_content;
     if (!current_file.is_open()) {
         std::cerr << "\nNot found: " << cur_file << std::endl;
     } else {
-        std::string current_file_content;
         std::getline(current_file, current_file_content);
 
         int words_counter = 0;
@@ -44,12 +44,10 @@ std::string ConverterJSON::CheckFile(nlohmann::json &cur_file) const {
             current_file.close();
             return current_file_content;
         }
-        else {
-            current_file_content = "";
-            current_file.close();
-            return current_file_content;
-        }
     }
+    current_file_content = "";
+    current_file.close();
+    return current_file_content;
 }
 
 

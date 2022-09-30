@@ -1,5 +1,6 @@
 #include "InvertedIndex.h"
 
+std::mutex m;
 std::vector<Entry> InvertedIndex::GetWordCount(const std::string &word) const {
     std::vector<Entry> word_count;
 
@@ -53,7 +54,9 @@ void InvertedIndex::UpdateDocumentBase(std::vector<std::string> input_docs) {
     for (int i = 0; i < unique_words.size(); i++) {
         files_threads.emplace_back([&temp_vec, &unique_words, i, this]() {
             temp_vec = GetWordCount(unique_words[i]);
+            m.lock();
             freq_dictionary.insert(std::make_pair(unique_words[i], temp_vec));
+            m.unlock();
         });
     }
 

@@ -27,8 +27,7 @@ std::vector<std::string> SearchServer::UniqueWords(std::string queries_input, st
     return request_unique_words;
 }
 
-std::vector<RelativeIndex>
-SearchServer::Relative(std::string queries_input, std::map<std::string, std::vector<Entry>> &_freq_dictionary) const {
+std::vector<RelativeIndex> SearchServer::Relative(std::string queries_input, std::map<std::string, std::vector<Entry>> &_freq_dictionary) const {
     std::vector<RelativeIndex> relative_temp;
     max_rel = 0;
     std::vector<std::string> unique_words = UniqueWords(queries_input, _freq_dictionary);
@@ -67,6 +66,7 @@ std::vector<std::vector<RelativeIndex>> SearchServer::Search(const std::vector<s
 
     for (int i = 0; i < queries_input.size(); i++) {
         std::vector<RelativeIndex> relative_ind = Relative(queries_input[i], _freq_dictionary);
+
         for (int j = 1; j < relative_ind.size(); ++j) {
             for (int r = 0; r < relative_ind.size() - j; r++) {
                 if (relative_ind[r].rank < relative_ind[r + 1].rank) {

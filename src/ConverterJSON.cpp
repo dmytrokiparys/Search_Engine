@@ -62,6 +62,7 @@ std::vector<std::string> ConverterJSON::GetTextDocuments() {
     int size = file.tellg();
     file.seekg(0, std::ios::beg);
     if (size == 0) {
+        file.close();
         throw ConfigFileEmpty();
     }
 
@@ -70,6 +71,7 @@ std::vector<std::string> ConverterJSON::GetTextDocuments() {
     nlohmann::json config = dict["config"];
 
     if (config == nullptr) {
+        file.close();
         throw ConfigHoleEmpty();
     }
 
@@ -78,6 +80,7 @@ std::vector<std::string> ConverterJSON::GetTextDocuments() {
     std::string version = config["version"];
     for (auto it: version) {
         if ((it < 48 || it > 59) && it != '.') {
+            file.close();
             throw IncorrectVersion();
         }
     }
@@ -85,6 +88,7 @@ std::vector<std::string> ConverterJSON::GetTextDocuments() {
     std::string max_respons = config["max_responses"];
     for (auto it: max_respons) {
         if (it < 48 || it > 59) {
+            file.close();
             throw IncorrectMaxRespons();
         }
     }
@@ -143,6 +147,7 @@ std::vector<std::string> ConverterJSON::GetRequests() const {
     int size = file.tellg();
     file.seekg(0, std::ios::beg);
     if (size == 0) {
+        file.close();
         throw RequestFileEmpty();
     }
 
@@ -185,8 +190,7 @@ void ConverterJSON::PutAnswers(std::vector<std::vector<RelativeIndex>> answers) 
             } else {
                 current_request_dict["result"] = {"true"};
                 for (int j = 0; j < answers[i].size(); j++) {
-                    current_request_dict["relevance"] += {"docid: ", answers[i][j].document_id, "rank: ",
-                                                          answers[i][j].rank};
+                    current_request_dict["relevance"] += {"docid: ", answers[i][j].document_id, "rank: ", answers[i][j].rank};
                 }
                 answer_dict["request" + std::to_string(i + 1)] = current_request_dict;
             }
